@@ -1,0 +1,43 @@
+{
+  "server": {
+    "name": "user-service",
+    "host": "0.0.0.0",
+    "port": 8080,
+    "grpc_port": 50051,
+    "http_port": 8080
+  },
+  "database": {
+    "driver": "mysql",
+    "host": "localhost",
+    "port": 3306,
+    "user": "root",
+    "password": "root",
+    "database": "smartlinkdrive",
+    "max_idle": 10,
+    "max_open": 100
+  },
+  "redis": {
+    "host": "localhost",
+    "port": 6379,
+    "password": "",
+    "db": 0,
+    "pool_size": 10
+  },
+  "consul": {
+    "host": "localhost",
+    "port": 8500
+  },
+  "jaeger": {
+    "endpoint": "localhost:6831",
+    "sampler": 1.0
+  },
+  "kafka": {
+    "brokers": ["localhost:9092"]
+  },
+  "log": {
+    "level": "debug",
+    "format": "text",
+    "output": "stdout",
+    "path": "logs/user-service.log"
+  }
+}
