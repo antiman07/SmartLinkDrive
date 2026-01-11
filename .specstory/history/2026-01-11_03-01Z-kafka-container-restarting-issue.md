@@ -1243,7 +1243,70 @@ docker-compose pull kafka
 docker-compose up -d
 ```
 
-###
+### 选项4：强制重新创建所有容器
+
+```bash
+cd /home/trunk/SmartLinkDrive/deployments
+
+# 停止所有服务
+docker-compose stop
+
+# 删除所有容器
+docker-compose rm -f
+
+# 拉取所有最新镜像
+docker-compose pull
+
+# 强制重新创建并启动所有服务
+docker-compose up -d --force-recreate
+```
+
+## 推荐执行顺序（针对当前 Kafka 问题）
+
+```bash
+cd /home/trunk/SmartLinkDrive/deployments
+
+# 1. 停止所有服务
+docker-compose stop
+
+# 2. 删除所有容器（保留数据卷）
+docker-compose rm -f
+
+# 3. 清理旧的 Kafka 镜像
+docker rmi confluentinc/cp-kafka:latest 2>/dev/null || true
+docker rmi confluentinc/cp-kafka:7.4.0 2>/dev/null || true
+
+# 4. 拉取所有镜像（包括新的 bitnami/kafka）
+docker-compose pull
+
+# 5. 重新启动所有服务
+docker-compose up -d
+
+# 6. 查看 Kafka 日志确认使用新镜像
+docker-compose logs -f kafka
+```
+
+## 验证清理结果
+
+```bash
+# 检查所有容器状态
+docker-compose ps
+
+# 检查 Kafka 使用的镜像
+docker inspect smartlinkdrive-kafka | grep -A 2 "Image"
+# 应该显示: "Image": "bitnami/kafka:3.6"
+
+# 查看 Kafka 启动日志
+docker-compose logs kafka | head -50
+```
+
+## 注意事项
+
+1. 数据卷：`docker-compose down` 不会删除数据卷，数据会保留
+2. 完全清理：使用 `docker-compose down -v` 会删除所有数据卷，数据会丢失
+3. 网络：`docker-compose down` 会删除网络，但 `up` 时会自动重新创建
+
+建议先使用选项3或推荐顺序，这样既能解决 Kafka 问题，又能保留其他服务的数据。执行后告诉我结果。
 
 ---
 
