@@ -1,0 +1,11 @@
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+docker run -it ubuntu bash
+
+sudo http_proxy=http://127.0.0.1:9876 https_proxy=http://127.0.0.1:9876 curl -L "https://github.com/docker/compose/releases/download/v5.0.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+
+export https_proxy=http://127.0.0.1:9876 http_proxy=http://127.0.0.1:9876 all_proxy=socks5://127.0.0.1:9876
+
+sudo HTTP_PROXY=http://192.168.2.119:9876 HTTPS_PROXY=http://192.168.2.119:9876 curl -L "github.com(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo HTTP_PROXY=http://192.168.2.119:9876 HTTPS_PROXY=http://192.168.2.119:9876 curl -L "github.com(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo HTTP_PROXY=http://192.168.2.119:9876 HTTPS_PROXY=http://192.168.2.119:9876 curl -L "github.com(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo HTTP_PROXY=http://192.168.2.119:9876 HTTPS_PROXY=http://192.168.2.119:9876 curl -L "https://github.com/docker/compose/releases/download/v2.24.5/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
