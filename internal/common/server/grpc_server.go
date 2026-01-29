@@ -68,10 +68,13 @@ func RunGRPCServer(cfg *config.Config, log logger.Logger, register GRPCRegisterF
 	}
 
 	// 构建统一的 Unary 拦截器链（按顺序执行）
+	// 说明：UnaryChain 的第一个 interceptor 是“最外层”，会包住后续所有 interceptor + handler。
 	unaryInterceptors := UnaryChain(
 		UnaryRecoveryInterceptor(log),            // 异常恢复，避免服务崩溃
+		UnaryAccessLogInterceptor(log),           // 访问日志（含鉴权失败等）
 		UnaryTracingInterceptor(cfg.Server.Name), // 链路追踪
-		UnaryAccessLogInterceptor(log),           // 访问日志
+		UnaryJWTAuthInterceptor(cfg.Auth, log),   // JWT 鉴权（可在配置中关闭）
+		UnaryRBACInterceptor(cfg.Auth),           // RBAC（可在配置中关闭）
 	)
 
 	// 创建 gRPC Server，并注入拦截器

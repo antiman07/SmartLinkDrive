@@ -34,6 +34,16 @@
   "kafka": {
     "brokers": ["localhost:9092"]
   },
+  "auth": {
+    "enabled": false,
+    "jwt_secret": "dev-secret-change-me",
+    "issuer": "smartlinkdrive",
+    "audience": "smartlinkdrive",
+    "rbac": {
+      "/smartlinkdrive.user.v1.UserService/GetProfile": ["user", "admin"],
+      "/smartlinkdrive.user.v1.UserService/ListUsers": ["admin"]
+    }
+  },
   "log": {
     "level": "debug",
     "format": "text",

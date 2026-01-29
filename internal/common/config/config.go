@@ -17,7 +17,17 @@ type Config struct {
 	Consul   ConsulConfig   `json:"consul"`
 	Jaeger   JaegerConfig   `json:"jaeger"`
 	Kafka    KafkaConfig    `json:"kafka"`
+	Auth     AuthConfig     `json:"auth"`
 	Log      LogConfig      `json:"log"`
+}
+
+// AuthConfig 鉴权与权限配置
+type AuthConfig struct {
+	Enabled   bool                `json:"enabled"`    // 是否开启 JWT 鉴权与 RBAC
+	JWTSecret string              `json:"jwt_secret"` // HMAC secret（HS256）
+	Issuer    string              `json:"issuer"`     // 可选：iss 校验
+	Audience  string              `json:"audience"`   // 可选：aud 校验
+	RBAC      map[string][]string `json:"rbac"`       // method -> required roles（gRPC FullMethod）
 }
 
 // ServerConfig 服务配置
@@ -157,6 +167,13 @@ func defaultConfig() *Config {
 		},
 		Kafka: KafkaConfig{
 			Brokers: []string{"localhost:9092"},
+		},
+		Auth: AuthConfig{
+			Enabled:   false,
+			JWTSecret: "",
+			Issuer:    "",
+			Audience:  "",
+			RBAC:      map[string][]string{},
 		},
 		Log: LogConfig{
 			Level:  "debug",
