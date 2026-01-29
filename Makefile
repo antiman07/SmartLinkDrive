@@ -8,12 +8,16 @@ build: ## 构建所有服务
 	@echo "Building all services..."
 	@go build -o bin/user-service ./cmd/user-service
 	@go build -o bin/vehicle-service ./cmd/vehicle-service
+	@go build -o bin/order-service ./cmd/order-service
 
 run-user: ## 运行用户服务
 	@go run ./cmd/user-service
 
 run-vehicle: ## 运行车辆服务
 	@go run ./cmd/vehicle-service
+
+run-order: ## 运行订单服务
+	@go run ./cmd/order-service
 
 test: ## 运行测试
 	@go test -v ./...

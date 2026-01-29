@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+package smartlinkdrive.order.v1;
+
+option go_package = "github.com/SmartLinkDrive/SmartLinkDrive/internal/api/proto/order;orderpb";
+
+// 订单状态使用字符串，与数据库持久化字段保持一致。
+// 典型取值：created/assigned/accepted/serving/completed/canceled。
+
+message Order {
+  string id = 1;
+  string user_id = 2;
+  string vehicle_id = 3;
+  string driver_id = 4;
+  string status = 5;
+  string biz_tag = 6;
+  string channel = 7;
+
+  string pickup_address = 8;
+  string dropoff_address = 9;
+
+  int64 estimated_price = 10;
+  int64 final_price = 11;
+  string currency = 12;
+
+  int64 created_at = 13;
+  int64 updated_at = 14;
+  int64 accepted_at = 15;
+  int64 started_at = 16;
+  int64 completed_at = 17;
+  int64 canceled_at = 18;
+}
+
+message CreateOrderRequest {
+  string user_id = 1;
+  string vehicle_id = 2;
+  string driver_id = 3;
+
+  string biz_tag = 4;
+  string channel = 5;
+  string pickup_address = 6;
+  string dropoff_address = 7;
+
+  int64 estimated_price = 8;
+  string currency = 9;
+}
+
+message CreateOrderResponse {
+  Order order = 1;
+}
+
+message GetOrderRequest {
+  string id = 1;
+}
+
+message GetOrderResponse {
+  Order order = 1;
+}
+
+message UpdateOrderStatusRequest {
+  string id = 1;
+  string status = 2;
+}
+
+message UpdateOrderStatusResponse {
+  Order order = 1;
+}
+
+message ListOrdersRequest {
+  string user_id = 1;
+  string status = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}
+
+message ListOrdersResponse {
+  repeated Order orders = 1;
+  int64 total = 2;
+}
+
+service OrderService {
+  rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
+  rpc GetOrder(GetOrderRequest) returns (GetOrderResponse);
+  rpc UpdateOrderStatus(UpdateOrderStatusRequest) returns (UpdateOrderStatusResponse);
+  rpc ListOrders(ListOrdersRequest) returns (ListOrdersResponse);
+}
+

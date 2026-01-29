@@ -1,0 +1,60 @@
+{
+  "server": {
+    "name": "order-service",
+    "host": "0.0.0.0",
+    "port": 8082,
+    "grpc_port": 50053,
+    "http_port": 8082
+  },
+  "database": {
+    "driver": "mysql",
+    "host": "smartlinkdrive-mysql",
+    "port": 3306,
+    "user": "root",
+    "password": "root",
+    "database": "smartlinkdrive",
+    "max_idle": 10,
+    "max_open": 100
+  },
+  "redis": {
+    "host": "smartlinkdrive-redis",
+    "port": 6379,
+    "password": "",
+    "db": 0,
+    "pool_size": 10
+  },
+  "consul": {
+    "host": "smartlinkdrive-consul",
+    "port": 8500
+  },
+  "jaeger": {
+    "endpoint": "smartlinkdrive-jaeger:6831",
+    "sampler": 1.0
+  },
+  "kafka": {
+    "brokers": ["smartlinkdrive-kafka:9092"]
+  },
+  "auth": {
+    "enabled": false,
+    "jwt_secret": "dev-secret-change-me",
+    "issuer": "smartlinkdrive",
+    "audience": "smartlinkdrive",
+    "public_methods": [
+      "/grpc.health.v1.Health/Check",
+      "/grpc.health.v1.Health/Watch"
+    ],
+    "rbac": {
+      "/smartlinkdrive.order.v1.OrderService/CreateOrder": ["user", "admin"],
+      "/smartlinkdrive.order.v1.OrderService/GetOrder": ["user", "admin"],
+      "/smartlinkdrive.order.v1.OrderService/ListOrders": ["user", "admin"],
+      "/smartlinkdrive.order.v1.OrderService/UpdateOrderStatus": ["admin"]
+    }
+  },
+  "log": {
+    "level": "debug",
+    "format": "text",
+    "output": "stdout",
+    "path": "logs/order-service.log"
+  }
+}
+
