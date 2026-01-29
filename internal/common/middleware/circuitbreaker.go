@@ -11,9 +11,9 @@ import (
 type CircuitBreakerState int
 
 const (
-	StateClosed CircuitBreakerState = iota // 关闭状态（正常）
-	StateOpen                              // 开启状态（熔断）
-	StateHalfOpen                          // 半开状态（尝试恢复）
+	StateClosed   CircuitBreakerState = iota // 关闭状态（正常）
+	StateOpen                                // 开启状态（熔断）
+	StateHalfOpen                            // 半开状态（尝试恢复）
 )
 
 // CircuitBreaker 熔断器

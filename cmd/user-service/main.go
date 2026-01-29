@@ -4,10 +4,13 @@ import (
 	"flag"
 	"fmt"
 
+	userpb "github.com/SmartLinkDrive/SmartLinkDrive/internal/api/proto/user"
 	"github.com/SmartLinkDrive/SmartLinkDrive/internal/common/config"
+	"github.com/SmartLinkDrive/SmartLinkDrive/internal/common/db"
 	"github.com/SmartLinkDrive/SmartLinkDrive/internal/common/logger"
 	"github.com/SmartLinkDrive/SmartLinkDrive/internal/common/server"
 	"github.com/SmartLinkDrive/SmartLinkDrive/internal/common/tracing"
+	"github.com/SmartLinkDrive/SmartLinkDrive/internal/user"
 	"google.golang.org/grpc"
 )
 
@@ -43,10 +46,26 @@ func main() {
 	}
 	_ = tracer
 
+	// 初始化数据库
+	gormDB, err := db.NewMySQL(
+		cfg.Database.Host,
+		cfg.Database.Port,
+		cfg.Database.User,
+		cfg.Database.Password,
+		cfg.Database.Database,
+		cfg.Database.MaxIdle,
+		cfg.Database.MaxOpen,
+	)
+	if err != nil {
+		log.Fatalf("failed to init mysql: %v", err)
+	}
+	if err := gormDB.AutoMigrate(&user.User{}); err != nil {
+		log.Fatalf("failed to migrate mysql schema: %v", err)
+	}
+
 	// 启动统一的 gRPC 服务模板
 	if err := server.RunGRPCServer(cfg, log, func(s *grpc.Server) error {
-		// TODO: 在这里注册 user-service 的业务 gRPC 服务
-		// pb.RegisterUserServiceServer(s, user.NewServer(...))
+		userpb.RegisterUserServiceServer(s, user.NewGRPCServer(gormDB, cfg.Auth))
 		return nil
 	}); err != nil {
 		log.Fatalf("user-service exited with error: %v", err)

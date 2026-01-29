@@ -17,6 +17,9 @@ func TestUnaryJWTAuthInterceptorAndRBAC(t *testing.T) {
 		JWTSecret: "test-secret",
 		Issuer:    "smartlinkdrive",
 		Audience:  "smartlinkdrive",
+		PublicMethods: []string{
+			"/x.y.Service/PublicNoAuth",
+		},
 		RBAC: map[string][]string{
 			"/x.y.Service/AdminOnly": {"admin"},
 			"/x.y.Service/Open":      {},
@@ -81,5 +84,14 @@ func TestUnaryJWTAuthInterceptorAndRBAC(t *testing.T) {
 	if err == nil {
 		t.Fatalf("expected permission denied, got nil")
 	}
-}
 
+	// public method：不带 token 也应放行
+	ctx3 := metadata.NewIncomingContext(context.Background(), metadata.Pairs())
+	info3 := &grpc.UnaryServerInfo{FullMethod: "/x.y.Service/PublicNoAuth"}
+	_, err = chain(ctx3, nil, info3, func(ctx context.Context, req any) (any, error) {
+		return "ok", nil
+	})
+	if err != nil {
+		t.Fatalf("expected public allow, got err=%v", err)
+	}
+}

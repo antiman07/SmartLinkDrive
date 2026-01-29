@@ -23,11 +23,14 @@ type Config struct {
 
 // AuthConfig 鉴权与权限配置
 type AuthConfig struct {
-	Enabled   bool                `json:"enabled"`    // 是否开启 JWT 鉴权与 RBAC
-	JWTSecret string              `json:"jwt_secret"` // HMAC secret（HS256）
-	Issuer    string              `json:"issuer"`     // 可选：iss 校验
-	Audience  string              `json:"audience"`   // 可选：aud 校验
-	RBAC      map[string][]string `json:"rbac"`       // method -> required roles（gRPC FullMethod）
+	Enabled   bool   `json:"enabled"`    // 是否开启 JWT 鉴权与 RBAC
+	JWTSecret string `json:"jwt_secret"` // HMAC secret（HS256）
+	Issuer    string `json:"issuer"`     // 可选：iss 校验
+	Audience  string `json:"audience"`   // 可选：aud 校验
+	// PublicMethods 公开方法白名单（gRPC FullMethod），用于放行注册/登录/健康检查等接口。
+	// 当 Enabled=true 时，命中该白名单的请求将跳过 JWT 校验与 RBAC。
+	PublicMethods []string            `json:"public_methods"`
+	RBAC          map[string][]string `json:"rbac"` // method -> required roles（gRPC FullMethod）
 }
 
 // ServerConfig 服务配置
@@ -173,7 +176,11 @@ func defaultConfig() *Config {
 			JWTSecret: "",
 			Issuer:    "",
 			Audience:  "",
-			RBAC:      map[string][]string{},
+			PublicMethods: []string{
+				"/grpc.health.v1.Health/Check",
+				"/grpc.health.v1.Health/Watch",
+			},
+			RBAC: map[string][]string{},
 		},
 		Log: LogConfig{
 			Level:  "debug",

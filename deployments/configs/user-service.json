@@ -39,6 +39,12 @@
     "jwt_secret": "dev-secret-change-me",
     "issuer": "smartlinkdrive",
     "audience": "smartlinkdrive",
+    "public_methods": [
+      "/smartlinkdrive.user.v1.UserService/RegisterUser",
+      "/smartlinkdrive.user.v1.UserService/Login",
+      "/grpc.health.v1.Health/Check",
+      "/grpc.health.v1.Health/Watch"
+    ],
     "rbac": {
       "/smartlinkdrive.user.v1.UserService/GetProfile": ["user", "admin"],
       "/smartlinkdrive.user.v1.UserService/ListUsers": ["admin"]

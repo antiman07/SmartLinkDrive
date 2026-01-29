@@ -13,11 +13,11 @@ type RateLimiter interface {
 
 // TokenBucket 令牌桶限流器
 type TokenBucket struct {
-	capacity     int64         // 桶容量
-	tokens       int64         // 当前令牌数
-	refillRate   int64         // 每秒补充的令牌数
-	lastRefill   time.Time     // 上次补充时间
-	mu           sync.Mutex    // 锁
+	capacity   int64      // 桶容量
+	tokens     int64      // 当前令牌数
+	refillRate int64      // 每秒补充的令牌数
+	lastRefill time.Time  // 上次补充时间
+	mu         sync.Mutex // 锁
 }
 
 // NewTokenBucket 创建令牌桶
@@ -56,10 +56,10 @@ func (tb *TokenBucket) Allow(ctx context.Context) bool {
 
 // SlidingWindow 滑动窗口限流器
 type SlidingWindow struct {
-	requests  []time.Time // 请求时间记录
-	window    time.Duration // 时间窗口
-	maxRequests int        // 最大请求数
-	mu        sync.Mutex
+	requests    []time.Time   // 请求时间记录
+	window      time.Duration // 时间窗口
+	maxRequests int           // 最大请求数
+	mu          sync.Mutex
 }
 
 // NewSlidingWindow 创建滑动窗口限流器

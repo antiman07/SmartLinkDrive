@@ -141,6 +141,9 @@ func UnaryJWTAuthInterceptor(cfg config.AuthConfig, log logger.Logger) grpc.Unar
 		if !cfg.Enabled {
 			return handler(ctx, req)
 		}
+		if isPublicMethod(cfg.PublicMethods, info.FullMethod) {
+			return handler(ctx, req)
+		}
 		if strings.TrimSpace(cfg.JWTSecret) == "" {
 			if log != nil {
 				log.Warn("auth enabled but jwt_secret is empty")
@@ -209,6 +212,9 @@ func UnaryRBACInterceptor(cfg config.AuthConfig) grpc.UnaryServerInterceptor {
 		if !cfg.Enabled {
 			return handler(ctx, req)
 		}
+		if isPublicMethod(cfg.PublicMethods, info.FullMethod) {
+			return handler(ctx, req)
+		}
 
 		required := cfg.RBAC[info.FullMethod]
 		if len(required) == 0 {
@@ -257,6 +263,18 @@ func audienceContains(aud jwt.ClaimStrings, want string) bool {
 	}
 	for _, v := range aud {
 		if strings.TrimSpace(v) == want {
+			return true
+		}
+	}
+	return false
+}
+
+func isPublicMethod(public []string, method string) bool {
+	if method == "" || len(public) == 0 {
+		return false
+	}
+	for _, m := range public {
+		if strings.TrimSpace(m) == method {
 			return true
 		}
 	}

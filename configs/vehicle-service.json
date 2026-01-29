@@ -39,6 +39,10 @@
     "jwt_secret": "dev-secret-change-me",
     "issuer": "smartlinkdrive",
     "audience": "smartlinkdrive",
+    "public_methods": [
+      "/grpc.health.v1.Health/Check",
+      "/grpc.health.v1.Health/Watch"
+    ],
     "rbac": {
       "/smartlinkdrive.vehicle.v1.VehicleService/GetVehicle": ["user", "admin"],
       "/smartlinkdrive.vehicle.v1.VehicleService/UpsertVehicle": ["admin"]
