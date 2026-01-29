@@ -67,12 +67,16 @@ func RunGRPCServer(cfg *config.Config, log logger.Logger, register GRPCRegisterF
 		return fmt.Errorf("failed to listen: %w", err)
 	}
 
+	// 构建统一的 Unary 拦截器链（按顺序执行）
+	unaryInterceptors := UnaryChain(
+		UnaryRecoveryInterceptor(log),            // 异常恢复，避免服务崩溃
+		UnaryTracingInterceptor(cfg.Server.Name), // 链路追踪
+		UnaryAccessLogInterceptor(log),           // 访问日志
+	)
+
+	// 创建 gRPC Server，并注入拦截器
 	s := grpc.NewServer(
-		grpc.UnaryInterceptor(UnaryChain(
-			UnaryRecoveryInterceptor(log),
-			UnaryTracingInterceptor(cfg.Server.Name),
-			UnaryAccessLogInterceptor(log),
-		)),
+		grpc.UnaryInterceptor(unaryInterceptors),
 	)
 
 	// gRPC 健康检查（供 Consul 的 GRPC check 探测）
